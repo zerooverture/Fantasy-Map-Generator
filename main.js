@@ -549,6 +549,9 @@ function generate() {
     Rivers.generate();
     defineBiomes();
 
+    Resources.generate();
+    Resources.draw();
+
     rankCells();
     Cultures.generate();
     Cultures.expand();
