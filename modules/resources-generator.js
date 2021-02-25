@@ -15,13 +15,17 @@
     // spread: percentage of eligible cells to get a resource
     // model: cells eligibility model
     return [
-      {i: 0}, // no resource
-      {i: 1, name: "Wood", value: 5, spread: 3, model: "forestAndTaiga", bonus: {fleet: 2, defence: 1}},
-      {i: 2, name: "Stone", value: 4, spread: .3, model: "mountains", bonus: {prestige: 1, defence: 2}},
+      {i: 1, name: "Wood", value: 5, spread: 2, model: "forestAndTaiga", bonus: {fleet: 2, defence: 1}},
+      {i: 2, name: "Stone", value: 4, spread: .3, model: "hills", bonus: {prestige: 1, defence: 2}},
       {i: 3, name: "Marble", value: 15, spread: .05, model: "mountains", bonus: {prestige: 2}},
+      {i: 4, name: "Iron", value: 8, spread: .12, model: "mountainsAndWetland", bonus: {artillery: 1, infantry: 1, defence: 1}},
+      {i: 5, name: "Copper", value: 10, spread: .06, model: "mountains", bonus: {artillery: 2, defence: 1, prestige: 1}},
+      {i: 6, name: "Lead", value: 8, spread: .04, model: "mountains", bonus: {artillery: 1, defence: 1}},
+      {i: 7, name: "Silver", value: 15, spread: .04, model: "mountains", bonus: {prestige: 2}},
+      {i: 8, name: "Gold", value: 30, spread: .02, model: "UpperRivers", bonus: {prestige: 3}},
       {i: 9, name: "Grain", value: 1, spread: 3, model: "habitability", bonus: {population: 4, comfort: 1}},
-      {i: 10, name: "Livestock", value: 2, spread: 1, model: "pasturesAndTemperateForest", bonus: {population: 2, comfort: 1}},
-      {i: 11, name: "Fish", value: 1, spread: 1, model: "water", bonus: {population: 2, comfort: 1}},
+      {i: 10, name: "Livestock", value: 2, spread: 2, model: "pasturesAndTemperateForest", bonus: {population: 2, comfort: 1}},
+      {i: 11, name: "Fish", value: 1, spread: 1.2, model: "water", bonus: {population: 2, comfort: 1}},
     ]
     // Savanna, Grassland Deciduous forest
   }
@@ -34,7 +38,10 @@
 
   const models = {
     forestAndTaiga: i => [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0][cells.biome[i]],
-    mountains: i => cells.h[i] >= 60,
+    hills: i => cells.h[i] >= 40,
+    mountains: i => cells.h[i] >= 60 || (cells.h[i] >= 40 && P(.1)),
+    mountainsAndWetland: i => cells.h[i] >= 60 || (cells.biome[i] === 12 && P(.1)),
+    UpperRivers: i => cells.h[i] >= 40 && cells.r[i],
     habitability: i => chance(biomesData.habitability[cells.biome[i]]),
     water: i => cells.h[i] < 20 || cells.r[i],
     pasturesAndTemperateForest: i => chance([0, 0, 0, 100, 100, 20, 100, 0, 0, 0, 0, 0, 0][cells.biome[i]]),
@@ -51,14 +58,15 @@
     cells.resource = new Uint8Array(cellsN); // resources array [0, 255]
 
     pack.resources = getDefault().map(resource => {
-      const spread = cellsP * resource.spread;
-      resource.max = gauss(spread, spread/2, 0, cellsN, 0);
+      const expected = cellsP * resource.spread;
+      resource.max = gauss(expected, expected / 2, expected / 5, cellsN, 0);
       resource.cells = 0;
       return resource;
     });
 
     const shuffledCells = d3.shuffle(cells.i.slice());
     for (const i of shuffledCells) {
+      if (!(i%10)) d3.shuffle(pack.resources); // shuffle who time to time
 
       for (const resource of pack.resources) {
         if (!resource.i) continue;
@@ -72,32 +80,7 @@
 
     }
 
-    // const waterCells = shuffledCells.filter(i => cells.h[i] < 20);
-    // const landCells = shuffledCells.filter(i => cells.h[i] >= 20);
-    // const habitableCells = landCells.filter(i => biomesData.habitability[cells.biome[i]] > 0);
-    // const forestCells = habitableCells.filter(i => biomesData.habitability[cells.biome[i]] > 0);
-
-    // for (const resource of resources) {
-    //   const model = models[resource.model];
-    //   const spread = cellsP * resource.spread;
-    //   const count = gauss(spread, spread, 0, cellsN, 0);
-
-    //   const candidateCells = cellsArray.filter(i => {
-    //     if (model.biome) {
-    //       const biome = cells.biome[i];
-    //       if (!model.biome[biome]) return false;
-    //       if (model.biome[biome] === 100) return true;
-    //       return model.biome[biome] / 100 > Math.random();
-    //     }
-
-    //     if (model.minHeight) {
-    //       return cells.h[i] >= model.minHeight;
-    //     }
-    //   });
-
-    //   const resourceCells = candidateCells
-
-    // }
+    console.table(pack.resources);
   }
 
   const draw = function() {
