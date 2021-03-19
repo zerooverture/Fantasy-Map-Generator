@@ -63,8 +63,8 @@ document.getElementById("options").querySelector("div.tab").addEventListener("cl
   if (id === "layersTab") layersContent.style.display = "block"; else
   if (id === "styleTab") styleContent.style.display = "block"; else
   if (id === "optionsTab") optionsContent.style.display = "block"; else
-  if (id === "toolsTab") customization === 1 
-    ? customizationMenu.style.display = "block" 
+  if (id === "toolsTab") customization === 1
+    ? customizationMenu.style.display = "block"
     : toolsContent.style.display = "block"; else
   if (id === "aboutTab") aboutContent.style.display = "block";
 });
@@ -399,6 +399,7 @@ function changeZoomExtent(value) {
 }
 
 // control stored options logic
+// 控制存储选项逻辑(应该是读取储存的选项,无视掉)
 function applyStoredOptions() {
   if (!localStorage.getItem("mapWidth") || !localStorage.getItem("mapHeight")) {
     mapWidthInput.value = window.innerWidth;
@@ -565,7 +566,7 @@ function regeneratePrompt() {
 }
 
 function showSavePane() {
-  $("#saveMapData").dialog({title: "Save map", resizable: false, width: "27em", 
+  $("#saveMapData").dialog({title: "Save map", resizable: false, width: "27em",
     position: {my: "center", at: "center", of: "svg"},
     buttons: {Close: function() {$(this).dialog("close");}}
   });
@@ -588,7 +589,7 @@ function saveGeoJSON() {
 }
 
 function showLoadPane() {
-  $("#loadMapData").dialog({title: "Load map", resizable: false, width: "17em", 
+  $("#loadMapData").dialog({title: "Load map", resizable: false, width: "17em",
     position: {my: "center", at: "center", of: "svg"},
     buttons: {Close: function() {$(this).dialog("close");}}
   });

@@ -238,6 +238,7 @@ function Pint(float) {
 }
 
 // round value to d decimals
+// //四舍五入d 到小数
 function rn(v, d = 0) {
   const m = Math.pow(10, d);
   return Math.round(v * m) / m;

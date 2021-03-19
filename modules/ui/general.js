@@ -9,7 +9,8 @@ $(window).resize(function(e) {
   changeMapSize();
 });
 
-window.onbeforeunload = () => "Are you sure you want to navigate away?";
+// 刷新页面的弹窗
+// window.onbeforeunload = () => "Are you sure you want to navigate away?";
 
 // Tooltips
 const tooltip = document.getElementById("tooltip");

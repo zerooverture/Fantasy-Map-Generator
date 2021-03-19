@@ -2,16 +2,18 @@
 // https://github.com/Azgaar/Fantasy-Map-Generator
 
 "use strict";
-const version = "1.61"; // generator version
-document.title += " v" + version;
+const version = "1.61"; // 生成器的版本
+document.title += " v" + version; // 设置浏览器标题
 
 // Switches to disable/enable logging features
+// 开启日志的开关
 const PRODUCTION = window.location.host;
-const INFO = !PRODUCTION;
-const TIME = !PRODUCTION;
-const WARN = 1;
-const ERROR = 1;
+const INFO = 0;
+const TIME = 0;
+const WARN = 0;
+const ERROR = 0;
 
+// if map version is not stored, clear localStorage and show a message
 // if map version is not stored, clear localStorage and show a message
 if (rn(localStorage.getItem("version"), 2) !== rn(version, 2)) {
   localStorage.clear();
@@ -19,6 +21,8 @@ if (rn(localStorage.getItem("version"), 2) !== rn(version, 2)) {
 }
 
 // append svg layers (in default order)
+// 添加svg图层(默认顺序)
+//  这里应该是数据渲染用的svg
 let svg = d3.select("#map");
 let defs = svg.select("#deftemp");
 let viewbox = svg.select("#viewbox");
@@ -104,34 +108,56 @@ fogging.append("rect").attr("x", 0).attr("y", 0).attr("width", "100%").attr("hei
 fogging.append("rect").attr("x", 0).attr("y", 0).attr("width", "100%").attr("height", "100%").attr("fill", "#e8f0f6").attr("filter", "url(#splotch)");
 
 // assign events separately as not a viewbox child
+// 单独分配事件，而不是viewbox的子视图
 scaleBar.on("mousemove", () => tip("Click to open Units Editor")).on("click", () => editUnits());
 legend.on("mousemove", () => tip("Drag to change the position. Click to hide the legend")).on("click", () => clearLegend());
 
+// 上面是SVG和事件等
+
 // main data variables
+// 主要数据变量
+// 基于 jittered 的方形网格和数据的初始图形
 let grid = {}; // initial grapg based on jittered square grid and data
+// 填充图形和数据
 let pack = {}; // packed graph and data
+// seed= 随机数种子
 let seed, mapId, mapHistory = [], elSelected, modules = {}, notes = [];
 let rulers = new Rulers();
+// 0——没有;1 =绘制高程图;2 -平局;3 -添加state/burg;4 -文化绘画
 let customization = 0; // 0 - no; 1 = heightmap draw; 2 - states draw; 3 - add state/burg; 4 - cultures draw
 
+// 生物群落数据
 let biomesData = applyDefaultBiomesSystem();
+// 文化相关数据,好像就是名字生成器
 let nameBases = Names.getNameBases(); // cultures-related data
+// 字体
 const fonts = ["Almendra+SC", "Georgia", "Arial", "Times+New+Roman", "Comic+Sans+MS", "Lucida+Sans+Unicode", "Courier+New"]; // default web-safe fonts
 
+// 默认配色方案
 let color = d3.scaleSequential(d3.interpolateSpectral); // default color scheme
+// 带有默认曲线插值的d3线生成器
 const lineGen = d3.line().curve(d3.curveBasis); // d3 line generator with default curve interpolation
 
 // d3 zoom behavior
+// D3的缩放行为
 let scale = 1, viewX = 0, viewY = 0;
 const zoom = d3.zoom().scaleExtent([1, 20]).on("zoom", zoomed);
 
 // default options
+// 默认选项
+// 选项对象
 let options = {pinNotes:false}; // options object
+// 地球上地图坐标 (通过 calculateMapCoordinates 生成)
 let mapCoordinates = {}; // map coordinates on globe
+// 默认的风向数据
 options.winds = [225, 45, 225, 315, 135, 315]; // default wind directions
 
+// 读取储存的配置
 applyStoredOptions();
+
+// voronoi图扩展(就是图像的宽高)，在生成后不能更改
 let graphWidth = +mapWidthInput.value, graphHeight = +mapHeightInput.value; // voronoi graph extention, cannot be changed arter generation
+// SVG的宽高
 let svgWidth = graphWidth, svgHeight = graphHeight; // svg canvas resolution, can be changed
 landmass.append("rect").attr("x", 0).attr("y", 0).attr("width", graphWidth).attr("height", graphHeight);
 oceanPattern.append("rect").attr("fill", "url(#oceanic)").attr("x", 0).attr("y", 0).attr("width", graphWidth).attr("height", graphHeight);
@@ -311,13 +337,21 @@ function findBurgForMFCG(params) {
 }
 
 // apply default biomes data
+// 应用默认的生物群系数据
 function applyDefaultBiomesSystem() {
+  // 部落名字数组
   const name = ["Marine","Hot desert","Cold desert","Savanna","Grassland","Tropical seasonal forest","Temperate deciduous forest","Tropical rainforest","Temperate rainforest","Taiga","Tundra","Glacier","Wetland"];
+  // 部落颜色数组
   const color = ["#466eab","#fbe79f","#b5b887","#d2d082","#c8d68f","#b6d95d","#29bc56","#7dcb35","#409c43","#4b6b32","#96784b","#d5e7eb","#0b9131"];
+  // 适居性数组
   const habitability = [0,4,10,22,30,50,100,80,90,12,4,0,12];
+  // 图标Density
   const iconsDensity = [0,3,2,120,120,120,120,150,150,100,5,0,150];
+  // 应该是图标数据
   const icons = [{},{dune:3, cactus:6, deadTree:1},{dune:9, deadTree:1},{acacia:1, grass:9},{grass:1},{acacia:8, palm:1},{deciduous:1},{acacia:5, palm:3, deciduous:1, swamp:1},{deciduous:6, swamp:1},{conifer:1},{grass:1},{},{swamp:1}];
+  // 生物群落运动成本
   const cost = [10,200,150,60,50,70,70,80,90,200,1000,5000,150]; // biome movement cost
+  // 看起来像是生存环境
   const biomesMartix = [ // hot ↔ cold [>19°C; <-4°C]; dry ↕ wet
     new Uint8Array([1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,10]),
     new Uint8Array([3,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,9,9,9,9,10,10,10]),
@@ -327,6 +361,7 @@ function applyDefaultBiomesSystem() {
   ];
 
   // parse icons weighted array into a simple array
+  // 解析图标权重数组为一个简单数组
   for (let i=0; i < icons.length; i++) {
     const parsed = [];
     for (const icon in icons[i]) {
@@ -441,7 +476,7 @@ function invokeActiveZooming() {
       else this.classList.remove("hidden");
     });
   }
-  
+
   // rescale emblems on zoom
   if (emblems.style("display") !== "none") {
     emblems.selectAll("g").each(function() {
