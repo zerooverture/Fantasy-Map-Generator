@@ -168,7 +168,7 @@ function changeMapSize() {
   fitScaleBar();
   if (window.fitLegendBox) fitLegendBox();
 }
-
+// 应用已经设置的画布大小(应该是地图大小,无视)
 // just apply canvas size that was already set
 function applyMapSize() {
   const zoomMin = +zoomExtentMin.value, zoomMax = +zoomExtentMax.value;
@@ -441,6 +441,8 @@ function applyStoredOptions() {
   if (height) mapHeightInput.value = height;
 }
 
+// 随机化选项如果随机化是允许的(未锁定或选项='default')
+// 实际上应该是随机生成一些配置项(无视)
 // randomize options if randomization is allowed (not locked or options='default')
 function randomizeOptions() {
   Math.random = aleaPRNG(seed); // reset seed to initial one

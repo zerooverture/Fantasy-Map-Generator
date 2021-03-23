@@ -20,7 +20,7 @@ class Rulers {
     for (const rulerString of rulers) {
       const [type, pointsString] = rulerString.split(": ");
       const points = pointsString.split(" ").map(el => el.split(",").map(n => +n));
-      const Type = type === "Ruler" ? Ruler : 
+      const Type = type === "Ruler" ? Ruler :
                    type === "Opisometer" ? Opisometer :
                    type === "Planimeter" ? Planimeter : null;
       this.create(Type, points);
@@ -341,6 +341,7 @@ class Planimeter extends Measurer {
   }
 }
 
+// 渲染缩放条(无视)
 // Scale bar
 function drawScaleBar() {
   if (scaleBar.style("display") === "none") return; // no need to re-draw hidden element

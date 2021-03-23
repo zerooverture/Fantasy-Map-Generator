@@ -813,6 +813,7 @@
     //console.table(states.map(s => s.diplomacy));
   }
 
+  // 为列出的或所有有效状态选择一个表单
   // select a forms for listed or all valid states
   const defineStateForms = function(list) {
     TIME && console.time("defineStateForms");

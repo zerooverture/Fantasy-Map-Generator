@@ -353,6 +353,7 @@
     ];
   }
 
+  // 在地图上扩展文化 类似 dijkstra (迪杰斯特拉 最短路径算法)
   // expand cultures across the map (Dijkstra-like algorithm)
   const expand = function() {
     TIME && console.time('expandCultures');

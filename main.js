@@ -163,6 +163,7 @@ landmass.append("rect").attr("x", 0).attr("y", 0).attr("width", graphWidth).attr
 oceanPattern.append("rect").attr("fill", "url(#oceanic)").attr("x", 0).attr("y", 0).attr("width", graphWidth).attr("height", graphHeight);
 oceanLayers.append("rect").attr("id", "oceanBase").attr("x", 0).attr("y", 0).attr("width", graphWidth).attr("height", graphHeight);
 
+// 移除loading动画(HTML,无视)
 void function removeLoading() {
   d3.select("#loading").transition().duration(4000).style("opacity", 0).remove();
   d3.select("#initial").transition().duration(4000).attr("opacity", 0).remove();
@@ -170,6 +171,7 @@ void function removeLoading() {
   d3.select("#tooltip").transition().duration(4000).style("opacity", 1);
 }()
 
+// 应该是入口,决定了怎么生成地图包括从url中获取seed
 // decide which map should be loaded or generated on page load
 void function checkLoadParameters() {
   const url = new URL(window.location.href);
@@ -217,6 +219,7 @@ void function checkLoadParameters() {
   generateMapOnLoad();
 }()
 
+// 应该是从url加载地图格式类的 无视掉
 function loadMapFromURL(maplink, random) {
   const URL = decodeURIComponent(maplink);
 
@@ -231,6 +234,7 @@ function loadMapFromURL(maplink, random) {
     });
 }
 
+// 显示更新错误(Html,无视)
 function showUploadErrorMessage(error, URL, random) {
   ERROR && console.error(error);
   alertMessage.innerHTML = `Cannot load map from the ${link(URL, "link provided")}.
@@ -239,13 +243,16 @@ function showUploadErrorMessage(error, URL, random) {
   $("#alert").dialog({title: "Loading error", width: "32em", buttons: {OK: function() {$(this).dialog("close");}}});
 }
 
+// 在页面加载时生成地图(入口2)
 function generateMapOnLoad() {
   applyStyleOnLoad(); // apply default of previously selected style
   generate(); // generate map
   focusOn(); // based on searchParams focus on point, cell or burg from MFCG
+  // 应用保存的图层预设
   applyPreset(); // apply saved layers preset
 }
 
+// 集中搜索参数中提供的坐标、cell或burg
 // focus on coordinates, cell or burg provided in searchParams
 function focusOn() {
   const url = new URL(window.location.href);
@@ -281,6 +288,7 @@ function focusOn() {
   if (x && y) zoomTo(x, y, s, 1600);
 }
 
+// //为MFCG查找burg并聚焦它
 // find burg for MFCG and focus on it
 function findBurgForMFCG(params) {
   const cells = pack.cells, burgs = pack.burgs;
@@ -373,6 +381,7 @@ function applyDefaultBiomesSystem() {
   return {i:d3.range(0, name.length), name, color, biomesMartix, habitability, iconsDensity, icons, cost};
 }
 
+// 显示欢迎信息(HTML,无视)
 function showWelcomeMessage() {
   const post = link("https://www.patreon.com/posts/48228540", "Main changes:");
   const changelog = link("https://github.com/Azgaar/Fantasy-Map-Generator/wiki/Changelog", "previous version");
@@ -407,6 +416,7 @@ function showWelcomeMessage() {
   );
 }
 
+// 缩放动作(无视)
 function zoomed() {
   const transform = d3.event.transform;
   const scaleDiff = scale - transform.k;
@@ -438,17 +448,20 @@ function zoomed() {
   }
 }
 
+// 缩放到一个特定的点(无视)
 // Zoom to a specific point
 function zoomTo(x, y, z = 8, d = 2000) {
   const transform = d3.zoomIdentity.translate(x * -z + graphWidth / 2, y * -z + graphHeight / 2).scale(z);
   svg.transition().duration(d).call(zoom.transform, transform);
 }
 
+// 重置缩放到初始化(无视)
 // Reset zoom to initial
 function resetZoom(d = 1000) {
   svg.transition().duration(d).call(zoom.transform, d3.zoomIdentity);
 }
 
+// 计算viewBox的x,y极值点(没发现引用,无视)
 // calculate x,y extreme points of viewBox
 function getViewBoxExtent() {
   // x = trX / scale * -1 + graphWidth / scale
@@ -456,6 +469,7 @@ function getViewBoxExtent() {
   return [[Math.abs(viewX / scale), Math.abs(viewY / scale)], [Math.abs(viewX / scale) + graphWidth / scale, Math.abs(viewY / scale) + graphHeight / scale]];
 }
 
+// 激活缩放功能(无视)
 // active zooming feature
 function invokeActiveZooming() {
   if (coastline.select("#sea_island").size() && +coastline.select("#sea_island").attr("auto-filter")) {
@@ -524,6 +538,7 @@ async function renderGroupCOAs(g) {
   }
 }
 
+// 似乎和html相关的事件(无视)
 // add drag to upload logic, pull request from @evyatron
 void function addDragToUpload() {
   document.addEventListener("dragover", function(e) {
@@ -564,37 +579,38 @@ void function addDragToUpload() {
   });
 }()
 
+// 入口3,主要数据的生成方法
 function generate() {
   try {
     const timeStart = performance.now();
-    invokeActiveZooming();
-    generateSeed();
+    invokeActiveZooming(); // 激活缩放功能(无视)
+    generateSeed(); // 生成地图种子(字符串!)或从URL searchParams获取它(无视)
     INFO && console.group("Generated Map " + seed);
-    applyMapSize();
-    randomizeOptions();
-    placePoints();
-    calculateVoronoi(grid, grid.points);
-    drawScaleBar();
-    HeightmapGenerator.generate();
-    markFeatures();
-    openNearSeaLakes();
-    OceanLayers();
-    defineMapSize();
-    calculateMapCoordinates();
-    calculateTemperatures();
-    generatePrecipitation();
-    reGraph();
-    drawCoastline();
+    applyMapSize(); // 应用已经设置的画布大小(应该是地图大小,无视)
+    randomizeOptions(); // 实际上应该是随机生成一些配置项(无视)
+    placePoints(); // 生成放置点来计算Voronoi图
+    calculateVoronoi(grid, grid.points); // 计算Delaunay之后 再计算Voronoi图
+    drawScaleBar(); // 渲染缩放条(无视)
+    HeightmapGenerator.generate(); // 生成高度图
+    markFeatures(); // 标记特点(海洋，湖泊，岛屿)
+    openNearSeaLakes(); // 这里是把靠近海的湖泊删除掉变成了海洋(打开近海湖泊)
+    OceanLayers(); // 生成海洋层(靠近大陆的地方海洋深度较低)
+    defineMapSize(); // 这里应该是根据一些设置定义地图的宽高(可以无视掉)
+    calculateMapCoordinates(); // 这里是根据配置参数(地图大小,latitude)来生成位于地球的位置点
+    calculateTemperatures(); // 温度模块(生成温度系数)
+    generatePrecipitation(); // 最简单的降水模型
+    reGraph(); // 重新计算Voronoi Graph 来封装cells
+    drawCoastline(); // 绘制海岸线
 
-    Rivers.generate();
-    Lakes.defineGroup();
-    defineBiomes();
+    Rivers.generate(); // 生成河流
+    Lakes.defineGroup(); // 应该是湖泊分组?目前不知道做什么
+    defineBiomes(); // 定义(生成)生物群落
 
-    rankCells();
-    Cultures.generate();
-    Cultures.expand();
-    BurgsAndStates.generate();
-    Religions.generate();
+    rankCells(); // 排列cells 根据宜居性来放置Burgs(城镇) 和生物?
+    Cultures.generate(); // 文化生成
+    Cultures.expand(); // 文化扩展
+    BurgsAndStates.generate(); // 城镇和州生成
+    Religions.generate();// 宗教生成
     BurgsAndStates.defineStateForms();
     BurgsAndStates.generateProvinces();
     BurgsAndStates.defineBurgFeatures();
@@ -633,6 +649,7 @@ function generate() {
 
 }
 
+// 生成地图种子(字符串!)或从URL searchParams获取它(无视)
 // generate map seed (string!) or get it from URL searchParams
 function generateSeed() {
   const first = !mapHistory[0];
@@ -640,6 +657,7 @@ function generateSeed() {
   const params = url.searchParams;
   const urlSeed = url.searchParams.get("seed");
   if (first && params.get("from") === "MFCG" && urlSeed.length === 13) seed = urlSeed.slice(0,-4);
+  // 这里似乎是要第一次打开才会使用url中的seed
   else if (first && urlSeed) seed = urlSeed;
   else if (optionsSeed.value && optionsSeed.value != seed) seed = optionsSeed.value;
   else seed = Math.floor(Math.random() * 1e9).toString();
@@ -647,6 +665,7 @@ function generateSeed() {
   Math.random = aleaPRNG(seed);
 }
 
+// 放置点来计算Voronoi图
 // Place points to calculate Voronoi diagram
 function placePoints() {
   TIME && console.time("placePoints");
@@ -660,6 +679,7 @@ function placePoints() {
   TIME && console.timeEnd("placePoints");
 }
 
+// 计算Delaunay之后 再计算Voronoi图
 // calculate Delaunay and then Voronoi diagram
 function calculateVoronoi(graph, points) {
   TIME && console.time("calculateDelaunay");
@@ -676,6 +696,7 @@ function calculateVoronoi(graph, points) {
   TIME && console.timeEnd("calculateVoronoi");
 }
 
+// 标记特点(海洋，湖泊，岛屿)
 // Mark features (ocean, lakes, islands)
 function markFeatures() {
   TIME && console.time("markFeatures");
@@ -716,6 +737,8 @@ function markFeatures() {
   TIME && console.timeEnd("markFeatures");
 }
 
+// 这里是把靠近海的湖泊删除掉变成了海洋(打开近海湖泊)
+// 靠近海的湖泊通常会有大量的水流入，它们中的大多数会刹闸而流入大海(参见Ancylus湖)
 // near sea lakes usually get a lot of water inflow, most of them should brake treshold and flow out to sea (see Ancylus Lake)
 function openNearSeaLakes() {
   if (templateInput.value === "Atoll") return; // no need for Atolls
@@ -754,6 +777,8 @@ function openNearSeaLakes() {
   TIME && console.timeEnd("openLakes");
 }
 
+// 这里应该是根据一些设置定义地图的宽高(可以无视掉)
+// 根据模板和随机因素定义地图的大小和位置
 // define map size and position based on template and random factor
 function defineMapSize() {
   const [size, latitude] = getSizeAndLatitude();
@@ -787,6 +812,7 @@ function defineMapSize() {
   }
 }
 
+// 这里是根据配置参数(地图大小,latitude)来生成位于地球的位置点
 // calculate map position on globe
 function calculateMapCoordinates() {
   const size = +document.getElementById("mapSizeOutput").value;
@@ -800,6 +826,7 @@ function calculateMapCoordinates() {
   mapCoordinates = {latT, latN, latS, lonT: lon*2, lonW: -lon, lonE: lon};
 }
 
+// 温度模块(生成温度系数)
 // temperature model
 function calculateTemperatures() {
   TIME && console.time('calculateTemperatures');
@@ -831,6 +858,8 @@ function calculateTemperatures() {
   TIME && console.timeEnd('calculateTemperatures');
 }
 
+
+// 最简单的降水模型
 // simplest precipitation model
 function generatePrecipitation() {
   TIME && console.time('generatePrecipitation');
@@ -947,6 +976,8 @@ function generatePrecipitation() {
   TIME && console.timeEnd('generatePrecipitation');
 }
 
+
+// 重新计算Voronoi Graph 来封装cells
 // recalculate Voronoi Graph to pack cells
 function reGraph() {
   TIME && console.time("reGraph");
@@ -996,6 +1027,7 @@ function reGraph() {
   TIME && console.timeEnd("reGraph");
 }
 
+// 检测并绘制海岸线
 // Detect and draw the coasline
 function drawCoastline() {
   TIME && console.time('drawCoastline');
@@ -1100,6 +1132,7 @@ function drawCoastline() {
   TIME && console.timeEnd('drawCoastline');
 }
 
+// 重新标记特点(海洋，湖泊，岛屿)
 // Re-mark features (ocean, lakes, islands)
 function reMarkFeatures() {
   TIME && console.time("reMarkFeatures");
@@ -1162,6 +1195,7 @@ function reMarkFeatures() {
   TIME && console.timeEnd("reMarkFeatures");
 }
 
+// 为每个细胞分配生物群系id
 // assign biome id for each cell
 function defineBiomes() {
   TIME && console.time("defineBiomes");
@@ -1185,6 +1219,7 @@ function defineBiomes() {
   TIME && console.timeEnd("defineBiomes");
 }
 
+// 给一个细胞分配生物群系id
 // assign biome id to a cell
 function getBiomeId(moisture, temperature, height) {
   if (temperature < -5) return 11; // permafrost biome, including sea ice
@@ -1195,6 +1230,7 @@ function getBiomeId(moisture, temperature, height) {
   return biomesData.biomesMartix[m][t];
 }
 
+// 评估细胞适宜性，计算培养中心和burgess放置的细胞群和rand细胞
 // assess cells suitability to calculate population and rand cells for culture center and burgs placement
 function rankCells() {
   TIME && console.time('rankCells');
@@ -1236,6 +1272,7 @@ function rankCells() {
   TIME && console.timeEnd('rankCells');
 }
 
+// 生成一些标记
 // generate some markers
 function addMarkers(number = 1) {
   if (!number) return;
@@ -1408,6 +1445,7 @@ function addMarkers(number = 1) {
   TIME && console.timeEnd("addMarkers");
 }
 
+// 重新生成一些区域,但是似乎是事件生成
 // regenerate some zones
 function addZones(number = 1) {
   TIME && console.time("addZones");
@@ -1724,6 +1762,7 @@ function addZones(number = 1) {
   TIME && console.timeEnd("addZones");
 }
 
+// 生成完成后显示地图统计信息(无视)
 // show map stats on generation complete
 function showStatistics() {
   const template = templateInput.value;
@@ -1746,6 +1785,7 @@ function showStatistics() {
   INFO && console.log(stats);
 }
 
+// 重新生成地图(无视)
 const regenerateMap = debounce(function() {
   WARN && console.warn("Generate new random map");
   closeDialogs("#worldConfigurator, #options3d");
@@ -1758,6 +1798,7 @@ const regenerateMap = debounce(function() {
   if ($("#worldConfigurator").is(":visible")) editWorld();
 }, 500);
 
+// 清除地图(应该是html清理)
 // clear the map
 function undraw() {
   viewbox.selectAll("path, circle, polygon, line, text, use, #zones > g, #armies > g, #ruler > g").remove();
