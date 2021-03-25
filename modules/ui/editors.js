@@ -1,8 +1,9 @@
 // module stub to store common functions for ui editors
 "use strict";
 
-restoreDefaultEvents(); // apply default viewbox events on load
+// restoreDefaultEvents(); // apply default viewbox events on load
 
+// 恢复默认的viewbox事件
 // restore default viewbox events
 function restoreDefaultEvents() {
   svg.call(zoom);
@@ -13,6 +14,7 @@ function restoreDefaultEvents() {
   legend.call(d3.drag().on("start", dragLegendBox));
 }
 
+// 在viewbox点击事件-运行函数基于目标
 // on viewbox click event - run function based on target
 function clicked() {
   const el = d3.event.target;
@@ -520,8 +522,8 @@ function changePickerSpace() {
 
   const space = this.dataset.space;
   const i = Array.from(this.parentNode.querySelectorAll("input")).map(input => input.value); // inputs
-  const fill = space === "hex" ? d3.rgb(this.value) 
-    : space === "rgb" ? d3.rgb(i[0], i[1], i[2]) 
+  const fill = space === "hex" ? d3.rgb(this.value)
+    : space === "rgb" ? d3.rgb(i[0], i[1], i[2])
     : d3.hsl(i[0], i[1]/100, i[2]/100);
 
   const hsl = d3.hsl(fill);

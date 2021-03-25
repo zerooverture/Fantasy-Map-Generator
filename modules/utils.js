@@ -90,7 +90,9 @@ function findAll(x, y, radius) {
 
 // get polygon points for packed cells knowing cell id
 function getPackPolygon(i) {
-  return pack.cells.v[i].map(v => pack.vertices.p[v]);
+  return pack.cells.v[i].map(v => {
+    return pack.vertices.p[v];
+  });
 }
 
 // get polygon points for initial cells knowing cell id
@@ -301,7 +303,8 @@ void function addFindAll() {
     radiusSearchInit(t, radius);
 
     var i = 0;
-    while (t.q = t.quads.pop()) {
+    t.q = t.quads.pop()
+    while (t.q) {
       i++;
 
       // Stop searching if this quadrant can’t contain a closer node.
@@ -309,7 +312,10 @@ void function addFindAll() {
           || (t.x1 = t.q.x0) > t.x3
           || (t.y1 = t.q.y0) > t.y3
           || (t.x2 = t.q.x1) < t.x0
-          || (t.y2 = t.q.y1) < t.y0) continue;
+          || (t.y2 = t.q.y1) < t.y0) {
+        t.q = t.quads.pop()
+      continue;
+      }
 
       // Bisect the current quadrant.
       if (t.node.length) {
@@ -339,6 +345,7 @@ void function addFindAll() {
             d2 = dx * dx + dy * dy;
         radiusSearchVisit(t, d2);
       }
+      t.q = t.quads.pop()
     }
     return t.result;
   }

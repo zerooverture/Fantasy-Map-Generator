@@ -540,44 +540,44 @@ async function renderGroupCOAs(g) {
 
 // 似乎和html相关的事件(无视)
 // add drag to upload logic, pull request from @evyatron
-void function addDragToUpload() {
-  document.addEventListener("dragover", function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    document.getElementById("mapOverlay").style.display = null;
-  });
-
-  document.addEventListener('dragleave', function(e) {
-    document.getElementById("mapOverlay").style.display = "none";
-  });
-
-  document.addEventListener("drop", function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-
-    const overlay = document.getElementById("mapOverlay");
-    overlay.style.display = "none";
-    if (e.dataTransfer.items == null || e.dataTransfer.items.length !== 1) return; // no files or more than one
-    const file = e.dataTransfer.items[0].getAsFile();
-    if (file.name.indexOf('.map') == -1) { // not a .map file
-      alertMessage.innerHTML = 'Please upload a <b>.map</b> file you have previously downloaded';
-      $("#alert").dialog({
-        resizable: false, title: "Invalid file format", position: {my: "center", at: "center", of: "svg"},
-        buttons: {Close: function() {$(this).dialog("close");}}
-      });
-      return;
-    }
-
-    // all good - show uploading text and load the map
-    overlay.style.display = null;
-    overlay.innerHTML = "Uploading<span>.</span><span>.</span><span>.</span>";
-    if (closeDialogs) closeDialogs();
-    uploadMap(file, () => {
-      overlay.style.display = "none";
-      overlay.innerHTML = "Drop a .map file to open";
-    });
-  });
-}()
+// void function addDragToUpload() {
+//   document.addEventListener("dragover", function(e) {
+//     e.stopPropagation();
+//     e.preventDefault();
+//     document.getElementById("mapOverlay").style.display = null;
+//   });
+//
+//   document.addEventListener('dragleave', function(e) {
+//     document.getElementById("mapOverlay").style.display = "none";
+//   });
+//
+//   document.addEventListener("drop", function(e) {
+//     e.stopPropagation();
+//     e.preventDefault();
+//
+//     const overlay = document.getElementById("mapOverlay");
+//     overlay.style.display = "none";
+//     if (e.dataTransfer.items == null || e.dataTransfer.items.length !== 1) return; // no files or more than one
+//     const file = e.dataTransfer.items[0].getAsFile();
+//     if (file.name.indexOf('.map') == -1) { // not a .map file
+//       alertMessage.innerHTML = 'Please upload a <b>.map</b> file you have previously downloaded';
+//       $("#alert").dialog({
+//         resizable: false, title: "Invalid file format", position: {my: "center", at: "center", of: "svg"},
+//         buttons: {Close: function() {$(this).dialog("close");}}
+//       });
+//       return;
+//     }
+//
+//     // all good - show uploading text and load the map
+//     overlay.style.display = null;
+//     overlay.innerHTML = "Uploading<span>.</span><span>.</span><span>.</span>";
+//     if (closeDialogs) closeDialogs();
+//     uploadMap(file, () => {
+//       overlay.style.display = "none";
+//       overlay.innerHTML = "Drop a .map file to open";
+//     });
+//   });
+// }()
 
 // 入口3,主要数据的生成方法
 function generate() {
@@ -586,50 +586,57 @@ function generate() {
     invokeActiveZooming(); // 激活缩放功能(无视)
     generateSeed(); // 生成地图种子(字符串!)或从URL searchParams获取它(无视)
     INFO && console.group("Generated Map " + seed);
-    applyMapSize(); // 应用已经设置的画布大小(应该是地图大小,无视)
-    randomizeOptions(); // 实际上应该是随机生成一些配置项(无视)
+    // applyMapSize(); // 应用已经设置的画布大小(应该是地图大小,无视)
+    // randomizeOptions(); // 实际上应该是随机生成一些配置项(无视)
+    temperatureEquatorOutput.value = temperatureEquatorInput.value=30
+    temperaturePoleOutput.value = temperaturePoleInput.value=-30
+    heightExponentInput.value = heightExponentOutput.value = 1.89
+    precInput.value = precOutput.value = 150
     placePoints(); // 生成放置点来计算Voronoi图
     calculateVoronoi(grid, grid.points); // 计算Delaunay之后 再计算Voronoi图
-    drawScaleBar(); // 渲染缩放条(无视)
+    // drawScaleBar(); // 渲染缩放条(无视)
     HeightmapGenerator.generate(); // 生成高度图
     markFeatures(); // 标记特点(海洋，湖泊，岛屿)
     openNearSeaLakes(); // 这里是把靠近海的湖泊删除掉变成了海洋(打开近海湖泊)
     OceanLayers(); // 生成海洋层(靠近大陆的地方海洋深度较低)
-    defineMapSize(); // 这里应该是根据一些设置定义地图的宽高(可以无视掉)
+    // defineMapSize(); // 这里应该是根据一些设置定义地图的宽高(可以无视掉)
     calculateMapCoordinates(); // 这里是根据配置参数(地图大小,latitude)来生成位于地球的位置点
     calculateTemperatures(); // 温度模块(生成温度系数)
-    generatePrecipitation(); // 最简单的降水模型
+    generatePrecipitation(); // 简单的降水模型
     reGraph(); // 重新计算Voronoi Graph 来封装cells
     drawCoastline(); // 绘制海岸线
+    //
+    // Rivers.generate(); // 生成河流
+    // Lakes.defineGroup(); // 应该是湖泊分组?目前不知道做什么
+    // defineBiomes(); // 定义(生成)生物群落
+    //
+    // rankCells(); // 排列cells 根据宜居性来放置Burgs(城镇) 和生物?
+    // Cultures.generate(); // 文化生成
+    // Cultures.expand(); // 文化扩展
+    // BurgsAndStates.generate(); // 城镇和州生成
+    // Religions.generate();// 宗教生成
+    // BurgsAndStates.defineStateForms();
+    // BurgsAndStates.generateProvinces();
+    // BurgsAndStates.defineBurgFeatures();
+    //
+    // drawStates();
+    // drawBorders();
+    // BurgsAndStates.drawStateLabels();
+    //
+    // Rivers.specify();
+    // Lakes.generateName();
+    //
+    // Military.generate();
+    // addMarkers();
+    // addZones();
+    // Names.getMapName();
 
-    Rivers.generate(); // 生成河流
-    Lakes.defineGroup(); // 应该是湖泊分组?目前不知道做什么
-    defineBiomes(); // 定义(生成)生物群落
+    // console.log(JSON.stringify(grid.cells.prec))
+    console.log(grid,pack, graphWidth,graphHeight)
 
-    rankCells(); // 排列cells 根据宜居性来放置Burgs(城镇) 和生物?
-    Cultures.generate(); // 文化生成
-    Cultures.expand(); // 文化扩展
-    BurgsAndStates.generate(); // 城镇和州生成
-    Religions.generate();// 宗教生成
-    BurgsAndStates.defineStateForms();
-    BurgsAndStates.generateProvinces();
-    BurgsAndStates.defineBurgFeatures();
-
-    drawStates();
-    drawBorders();
-    BurgsAndStates.drawStateLabels();
-
-    Rivers.specify();
-    Lakes.generateName();
-
-    Military.generate();
-    addMarkers();
-    addZones();
-    Names.getMapName();
-
-    WARN && console.warn(`TOTAL: ${rn((performance.now()-timeStart)/1000,2)}s`);
-    showStatistics();
-    INFO && console.groupEnd("Generated Map " + seed);
+    // WARN && console.warn(`TOTAL: ${rn((performance.now()-timeStart)/1000,2)}s`);
+    // showStatistics();
+    // INFO && console.groupEnd("Generated Map " + seed);
   }
   catch(error) {
     ERROR && console.error(error);
@@ -817,7 +824,6 @@ function defineMapSize() {
 function calculateMapCoordinates() {
   const size = +document.getElementById("mapSizeOutput").value;
   const latShift = +document.getElementById("latitudeOutput").value;
-
   const latT = size / 100 * 180;
   const latN = 90 - (180 - latT) * latShift / 100;
   const latS = latN - latT;
@@ -859,12 +865,13 @@ function calculateTemperatures() {
 }
 
 
-// 最简单的降水模型
+// 简单的降水模型
 // simplest precipitation model
 function generatePrecipitation() {
   TIME && console.time('generatePrecipitation');
   prec.selectAll("*").remove();
   const cells = grid.cells;
+  // 降水数组
   cells.prec = new Uint8Array(cells.i.length); // precipitation array
   const modifier = precInput.value / 100; // user's input
   const cellsX = grid.cellsX, cellsY = grid.cellsY;
@@ -881,18 +888,20 @@ function generatePrecipitation() {
   }
   const lalitudeModifier = [4,2,2,2,1,1,2,2,2,2,3,3,2,2,1,1,1,0.5]; // by 5d step
 
+  // 根据细胞纬度和那里的盛行风确定风向
   // difine wind directions based on cells latitude and prevailing winds there
   d3.range(0, cells.i.length, cellsX).forEach(function(c, i) {
     const lat = mapCoordinates.latN - i / cellsY * mapCoordinates.latT;
     const band = (Math.abs(lat) - 1) / 5 | 0;
     const latMod = lalitudeModifier[band];
-    const tier = Math.abs(lat - 89) / 30 | 0; // 30d tiers from 0 to 5 from N to S
+    const tier = Math.abs(lat - 89) / 30 | 0;// 30d层从0到5从N到S // 30d tiers from 0 to 5 from N to S
     if (options.winds[tier] > 40 && options.winds[tier] < 140) westerly.push([c, latMod, tier]);
     else if (options.winds[tier] > 220 && options.winds[tier] < 320) easterly.push([c + cellsX -1, latMod, tier]);
     if (options.winds[tier] > 100 && options.winds[tier] < 260) northerly++;
     else if (options.winds[tier] > 280 || options.winds[tier] < 80) southerly++;
   });
 
+  // 根据风向分布风
   // distribute winds by direction
   if (westerly.length) passWind(westerly, 120 * modifier, 1, cellsX);
   if (easterly.length) passWind(easterly, 120 * modifier, -1, cellsX);
@@ -914,36 +923,39 @@ function generatePrecipitation() {
     const maxPrecInit = maxPrec;
     for (let first of source) {
       if (first[0]) {maxPrec = Math.min(maxPrecInit * first[1], 255); first = first[0];}
-      let humidity = maxPrec - cells.h[first]; // initial water amount
-      if (humidity <= 0) continue; // if first cell in row is too elevated cosdired wind dry
+      let humidity = maxPrec - cells.h[first];// 初始含水量 // initial water amount
+      if (humidity <= 0) continue; // 如果第一个单元格过高，则被风吹干 // if first cell in row is too elevated cosdired wind dry
+      // console.log(first,maxPrec, next, steps)
       for (let s = 0, current = first; s < steps; s++, current += next) {
+        // 永久冻土上没有通量
         // no flux on permafrost
         if (cells.temp[current] < -5) continue;
         // water cell
         if (cells.h[current] < 20) {
           if (cells.h[current+next] >= 20) {
-            cells.prec[current+next] += Math.max(humidity / rand(10, 20), 1); // coastal precipitation
+            cells.prec[current+next] += Math.max(humidity / rand(10, 20), 1); // 沿海降水 // coastal precipitation
           } else {
-            humidity = Math.min(humidity + 5 * modifier, maxPrec); // wind gets more humidity passing water cell
-            cells.prec[current] += 5 * modifier; // water cells precipitation (need to correctly pour water through lakes)
+            humidity = Math.min(humidity + 5 * modifier, maxPrec);// 风通过电池获得更多的湿度  // wind gets more humidity passing water cell
+            // console.log(humidity)
+            cells.prec[current] += 5 * modifier;// 水细胞沉淀(需要正确地通过湖泊倒水) // water cells precipitation (need to correctly pour water through lakes)
           }
           continue;
         }
-
         // land cell
         const precipitation = getPrecipitation(humidity, current, next);
+        // console.log(precipitation+"")
         cells.prec[current] += precipitation;
-        const evaporation = precipitation > 1.5 ? 1 : 0; // some humidity evaporates back to the atmosphere
+        const evaporation = precipitation > 1.5 ? 1 : 0;// 一些湿度蒸发回到大气中 // some humidity evaporates back to the atmosphere
         humidity = Math.min(Math.max(humidity - precipitation + evaporation, 0), maxPrec);
       }
     }
   }
 
   function getPrecipitation(humidity, i, n) {
-    if (cells.h[i+n] > 85) return humidity; // 85 is max passable height
-    const normalLoss = Math.max(humidity / (10 * modifier), 1); // precipitation in normal conditions
-    const diff = Math.max(cells.h[i+n] - cells.h[i], 0); // difference in height
-    const mod = (cells.h[i+n] / 70) ** 2; // 50 stands for hills, 70 for mountains
+    if (cells.h[i+n] > 85) return humidity;// 85是最大可通过的高度 // 85 is max passable height
+    const normalLoss = Math.max(humidity / (10 * modifier), 1);// 正常情况下的降水 // precipitation in normal conditions
+    const diff = Math.max(cells.h[i+n] - cells.h[i], 0); // 高度差 // difference in height
+    const mod = (cells.h[i+n] / 70) ** 2;// 50代表小山，70代表山脉 // 50 stands for hills, 70 for mountains
     return Math.min(Math.max(normalLoss + diff * mod, 1), humidity);
   }
 
@@ -1022,7 +1034,10 @@ function reGraph() {
   cells.q = d3.quadtree(cells.p.map((p, d) => [p[0], p[1], d])); // points quadtree for fast search
   cells.h = new Uint8Array(newCells.h); // heights
   cells.area = new Uint16Array(cells.i.length); // cell area
-  cells.i.forEach(i => cells.area[i] = Math.abs(d3.polygonArea(getPackPolygon(i))));
+  cells.i.forEach(i => {
+    // console.log(i)
+    cells.area[i] = Math.abs(d3.polygonArea(getPackPolygon(i)))
+  });
 
   TIME && console.timeEnd("reGraph");
 }
@@ -1169,6 +1184,7 @@ function reMarkFeatures() {
           cellNumber++;
         }
       });
+      console.log("----------------")
     }
 
     const type = land ? "island" : border ? "ocean" : "lake";
