@@ -35,6 +35,7 @@ const generate = function(changeHeights = true) {
         if (!cells.t[c]) cells.t[c] = t+1;
       }));
     }
+    console.log(JSON.stringify(cells.t))
   }
 
   // height with added t value to make map less depressed
