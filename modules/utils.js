@@ -26,7 +26,6 @@ function getJitteredGrid(width, height, spacing) {
   const radius = spacing / 2; // square radius
   const jittering = radius * .9; // max deviation
   const jitter = () => Math.random() * 2 * jittering - jittering;
-
   let points = [];
   for (let y = radius; y < height; y += spacing) {
     for (let x = radius; x < width; x += spacing) {
