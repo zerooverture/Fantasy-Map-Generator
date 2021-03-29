@@ -13,7 +13,7 @@ const setClimateData = function(h) {
 
     // default flux: sum of precipition around lake first cell
     f.flux = rn(d3.sum(f.shoreline.map(c => grid.cells.prec[cells.g[c]])) / 2);
-  
+
     // temperature and evaporation to detect closed lakes
     f.temp = f.cells < 6 ? grid.cells.temp[cells.g[f.firstCell]] : rn(d3.mean(f.shoreline.map(c => grid.cells.temp[cells.g[c]])), 1);
     const height = (f.height - 18) ** heightExponentInput.value; // height in meters

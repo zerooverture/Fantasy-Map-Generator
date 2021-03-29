@@ -607,10 +607,10 @@ function generate() {
     drawCoastline(); // 绘制海岸线
 
     Rivers.generate(); // 生成河流
-    // Lakes.defineGroup(); // 应该是湖泊分组?目前不知道做什么
-    // defineBiomes(); // 定义(生成)生物群落
-    //
-    // rankCells(); // 排列cells 根据宜居性来放置Burgs(城镇) 和生物?
+    Lakes.defineGroup(); // 应该是湖泊分组?目前不知道做什么(应该是给湖泊分组,淡水 盐水 干枯等)
+    defineBiomes(); // 定义(生成)生物群落
+    rankCells(); // 排列cells 根据宜居性来放置Burgs(城镇) 和生物?
+    console.log(JSON.stringify(pack.cells.pop))
     // Cultures.generate(); // 文化生成
     // Cultures.expand(); // 文化扩展
     // BurgsAndStates.generate(); // 城镇和州生成
@@ -1255,6 +1255,7 @@ function rankCells() {
 
   const flMean = d3.median(cells.fl.filter(f => f)) || 0, flMax = d3.max(cells.fl) + d3.max(cells.conf); // to normalize flux
   const areaMean = d3.mean(cells.area); // to adjust population by cell area
+  // console.log(JSON.stringify(cells.haven))
 
   for (const i of cells.i) {
     if (cells.h[i] < 20) continue; // no population in water
@@ -1262,7 +1263,6 @@ function rankCells() {
     if (!s) continue; // uninhabitable biomes has 0 suitability
     if (flMean) s += normalize(cells.fl[i] + cells.conf[i], flMean, flMax) * 250; // big rivers and confluences are valued
     s -= (cells.h[i] - 50) / 5; // low elevation is valued, high is not;
-
     if (cells.t[i] === 1) {
       if (cells.r[i]) s += 15; // estuary is valued
       const feature = features[cells.f[cells.haven[i]]];
@@ -1278,7 +1278,6 @@ function rankCells() {
         if (cells.harbor[i] === 1) s += 20; // safe sea harbor is valued
       }
     }
-
     cells.s[i] = s / 5; // general population rate
     // cell rural population is suitability adjusted by cell area
     cells.pop[i] = cells.s[i] > 0 ? cells.s[i] * cells.area[i] / areaMean : 0;
