@@ -35,7 +35,6 @@ const generate = function(changeHeights = true) {
         if (!cells.t[c]) cells.t[c] = t+1;
       }));
     }
-    console.log(JSON.stringify(cells.t))
   }
 
   // height with added t value to make map less depressed
@@ -58,6 +57,7 @@ const generate = function(changeHeights = true) {
   function drainWater() {
     const MIN_FLUX_TO_FORM_RIVER = 30;
     const land = cells.i.filter(i => h[i] >= 20).sort((a,b) => h[b] - h[a]);
+
     const lakeOutCells = Lakes.setClimateData(h);
 
     land.forEach(function(i) {
@@ -87,7 +87,6 @@ const generate = function(changeHeights = true) {
         lake.outlet = cells.r[lakeCell];
         flowDown(i, cells.fl[i], cells.fl[lakeCell], lake.outlet);
       }
-
       // assign all tributary rivers to outlet basin
       for (let outlet = lakes[0]?.outlet, l = 0; l < lakes.length; l++) {
         lakes[l].inlets?.forEach(fork => riversData.find(r => r.river === fork).parent = outlet);
