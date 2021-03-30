@@ -610,14 +610,13 @@ function generate() {
     Lakes.defineGroup(); // 应该是湖泊分组?目前不知道做什么(应该是给湖泊分组,淡水 盐水 干枯等)
     defineBiomes(); // 定义(生成)生物群落
     rankCells(); // 排列cells 根据宜居性来放置Burgs(城镇) 和生物?
-    console.log(JSON.stringify(pack.cells.pop))
-    // Cultures.generate(); // 文化生成
+    Cultures.generate(); // 文化生成
     // Cultures.expand(); // 文化扩展
     // BurgsAndStates.generate(); // 城镇和州生成
     // Religions.generate();// 宗教生成
-    // BurgsAndStates.defineStateForms();
-    // BurgsAndStates.generateProvinces();
-    // BurgsAndStates.defineBurgFeatures();
+    // BurgsAndStates.defineStateForms(); // 定义州的形式
+    // BurgsAndStates.generateProvinces(); // 生成省份
+    // BurgsAndStates.defineBurgFeatures(); // 定义城镇的特点(港口什么的)
     //
     // drawStates();
     // drawBorders();
