@@ -14,8 +14,9 @@
     const burgs = pack.burgs = placeCapitals();
     pack.states = createStates();
     const capitalRoutes = Routes.getRoads();
-
     placeTowns();
+    // console.log(JSON.stringify(capitalRoutes))
+    return;
     expandStates();
     normalizeStates();
     const townRoutes = Routes.getTrails();
@@ -80,19 +81,19 @@
         // burgs data
         b.i = b.state = i;
         b.culture = cells.culture[b.cell];
-        b.name = Names.getCultureShort(b.culture);
+        b.name = "Names.getCultureShort(b.culture)";
         b.feature = cells.f[b.cell];
         b.capital = 1;
 
         // states data
         const expansionism = rn(Math.random() * powerInput.value + 1, 1);
-        const basename = b.name.length < 9 && b.cell%5 === 0 ? b.name : Names.getCultureShort(b.culture);
-        const name = Names.getState(basename, b.culture);
+        const basename = b.name.length < 9 && b.cell%5 === 0 ? b.name : "Names.getCultureShort(b.culture)";
+        const name = "Names.getState(basename, b.culture)";
         const type = cultures[b.culture].type;
 
-        const coa = COA.generate(null, null, null, type);
-        coa.shield = COA.getShield(b.culture, null);
-        states.push({i, color: colors[i-1], name, expansionism, capital: i, type, center: b.cell, culture: b.culture, coa});
+        // const coa = COA.generate(null, null, null, type);
+        // coa.shield = COA.getShield(b.culture, null);
+        states.push({i, color: colors[i-1], name, expansionism, capital: i, type, center: b.cell, culture: b.culture});
         cells.burg[b.cell] = i;
       });
 

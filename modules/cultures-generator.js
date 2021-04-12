@@ -43,6 +43,8 @@
     const colors = getColors(count);
     const emblemShape = document.getElementById("emblemShape").value;
 
+    // console.log(cultures)
+
     cultures.forEach(function(c, i) {
       const cell = c.center = placeCenter(c.sort ? c.sort : (i) => cells.s[i]);
       centers.add(cells.p[cell]);
@@ -60,6 +62,8 @@
 
     function placeCenter(v) {
       let c, spacing = (graphWidth + graphHeight) / 2 / count;
+      // console.log(spacing)
+      // console.log(populated)
       const sorted = [...populated].sort((a, b) => v(b) - v(a)), max = Math.floor(sorted.length / 2);
       do {c = sorted[biased(0, max, 5)]; spacing *= .9;}
       while (centers.find(cells.p[c][0], cells.p[c][1], spacing) !== undefined);
@@ -81,7 +85,6 @@
       let def = getDefault(c);
       if (c === def.length) return def;
       if (def.every(d => d.odd === 1)) return def.splice(0, c);
-
       const count = Math.min(c, def.length);
       const cultures = [];
 
@@ -358,7 +361,6 @@
   const expand = function() {
     TIME && console.time('expandCultures');
     cells = pack.cells;
-
     const queue = new PriorityQueue({comparator: (a, b) => a.p - b.p});
     pack.cultures.forEach(function(c) {
       if (!c.i || c.removed) return;
@@ -369,6 +371,7 @@
     const cost = [];
     while (queue.length) {
       const next = queue.dequeue(), n = next.e, p = next.p, c = next.c;
+      // console.log(next)
       const type = pack.cultures[c].type;
       cells.c[n].forEach(function(e) {
         const biome = cells.biome[e];
@@ -378,10 +381,9 @@
         const riverCost = getRiverCost(cells.r[e], e, type);
         const typeCost = getTypeCost(cells.t[e], type);
         const totalCost = p + (biomeCost + biomeChangeCost + heightCost + riverCost + typeCost) / pack.cultures[c].expansionism;
-
         if (totalCost > neutral) return;
-
         if (!cost[e] || totalCost < cost[e]) {
+          // console.log(e,c)
           if (cells.s[e] > 0) cells.culture[e] = c; // assign culture to populated cell
           cost[e] = totalCost;
           queue.queue({e, p:totalCost, c});

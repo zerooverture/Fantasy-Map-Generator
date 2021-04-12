@@ -11,13 +11,18 @@
     if (capitals.length < 2) return []; // not enough capitals to build main roads
     const paths = []; // array to store path segments
 
+    // let i=0;
     for (const b of capitals) {
       const connect = capitals.filter(c => c.i > b.i && c.feature === b.feature);
       if (!connect.length) continue;
       const farthest = d3.scan(connect, (a, c) => ((c.y - b.y) ** 2 + (c.x - b.x) ** 2) - ((a.y - b.y) ** 2 + (a.x - b.x) ** 2));
       const [from, exit] = findLandPath(b.cell, connect[farthest].cell, null);
+      // console.log(JSON.stringify(from))
       const segments = restorePath(b.cell, exit, "main", from);
       segments.forEach(s => paths.push(s));
+      // return paths;
+      // if(i>0) return paths;
+      // i++;
     }
 
     cells.i.forEach(i => cells.s[i] += cells.road[i] / 2); // add roads to suitability score
@@ -152,13 +157,13 @@
   function findLandPath(start, exit = null, toRoad = null) {
     const cells = pack.cells;
     const queue = new PriorityQueue({comparator: (a, b) => a.p - b.p});
-    const cost = [], from = [];
+    const cost = {  }, from = {  };
     queue.queue({e: start, p: 0});
 
     while (queue.length) {
       const next = queue.dequeue(), n = next.e, p = next.p;
       if (toRoad && cells.road[n]) return [from, n];
-
+      // if(start==267) console.log(n,cells.c[n])
       for (const c of cells.c[n]) {
         if (cells.h[c] < 20) continue; // ignore water cells
         const stateChangeCost = cells.state && cells.state[c] !== cells.state[n] ? 400 : 0; // trails tend to lay within the same state
@@ -169,6 +174,8 @@
         const cellCoast = 10 + stateChangeCost + habitedCost + heightChangeCost + heightCost;
         const totalCost = p + (cells.road[c] || cells.burg[c] ? cellCoast / 3 : cellCoast);
 
+        if(start==267 && (c == 336 || c == 338))
+          console.log(`${c},${stateChangeCost},${habitability},${habitedCost},${heightChangeCost},${heightCost},${cellCoast},${totalCost}`);
         if (from[c] || totalCost >= cost[c]) continue;
         from[c] = n;
         if (c === exit) return [from, exit];
