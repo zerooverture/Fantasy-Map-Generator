@@ -85,7 +85,9 @@
           const target = ports[t].cell;
           if (connected[target]) continue;
 
+          // console.log(target, source)
           const [from, exit, passable] = findOceanPath(target, source, true);
+          // console.log(from, exit, passable)
           if (!passable) continue;
 
           const path = restorePath(target, exit, "ocean", from);
@@ -174,8 +176,6 @@
         const cellCoast = 10 + stateChangeCost + habitedCost + heightChangeCost + heightCost;
         const totalCost = p + (cells.road[c] || cells.burg[c] ? cellCoast / 3 : cellCoast);
 
-        if(start==267 && (c == 336 || c == 338))
-          console.log(`${c},${stateChangeCost},${habitability},${habitedCost},${heightChangeCost},${heightCost},${cellCoast},${totalCost}`);
         if (from[c] || totalCost >= cost[c]) continue;
         from[c] = n;
         if (c === exit) return [from, exit];

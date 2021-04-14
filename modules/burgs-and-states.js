@@ -15,8 +15,6 @@
     pack.states = createStates();
     const capitalRoutes = Routes.getRoads();
     placeTowns();
-    // console.log(JSON.stringify(capitalRoutes))
-    return;
     expandStates();
     normalizeStates();
     const townRoutes = Routes.getTrails();
@@ -28,9 +26,12 @@
     assignColors();
 
     generateCampaigns();
-    generateDiplomacy();
-    Routes.draw(capitalRoutes, townRoutes, oceanRoutes);
-    drawBurgs();
+    // generateDiplomacy();
+    // Routes.draw(capitalRoutes, townRoutes, oceanRoutes);
+    // drawBurgs();
+
+    console.log(JSON.stringify(pack.states))
+    return;
 
     function placeCapitals() {
       TIME && console.time('placeCapitals');
@@ -106,7 +107,6 @@
       TIME && console.time('placeTowns');
       const score = new Int16Array(cells.s.map(s => s * gauss(1,3,0,20,3))); // a bit randomized cell score for towns placement
       const sorted = cells.i.filter(i => !cells.burg[i] && score[i] > 0 && cells.culture[i]).sort((a, b) => score[b] - score[a]); // filtered and sorted array of indexes
-
       const desiredNumber = manorsInput.value == 1000 ? rn(sorted.length / 5 / (grid.points.length / 10000) ** .8) : manorsInput.valueAsNumber;
       const burgsNumber = Math.min(desiredNumber, sorted.length); // towns to generate
       let burgsAdded = 0;
@@ -122,7 +122,7 @@
           if (burgsTree.find(x, y, s) !== undefined) continue; // to close to existing burg
           const burg = burgs.length;
           const culture = cells.culture[cell];
-          const name = Names.getCulture(culture);
+          const name = "Names.getCulture(culture)";
           burgs.push({cell, x, y, state: 0, i: burg, culture, name, capital: 0, feature:cells.f[cell]});
           burgsTree.add([x, y]);
           cells.burg[cell] = burg;
@@ -160,6 +160,7 @@
 
       // define burg population (keep urbanization at about 10% rate)
       b.population = rn(Math.max((cells.s[i] + cells.road[i] / 2) / 8 + b.i / 1000 + i % 100 / 1000, .1), 3);
+
       if (b.capital) b.population = rn(b.population * 1.3, 3); // increase capital population
 
       if (b.port) {
@@ -168,10 +169,8 @@
         b.x = rn((vertices.p[e[0]][0] + vertices.p[e[1]][0]) / 2, 2);
         b.y = rn((vertices.p[e[0]][1] + vertices.p[e[1]][1]) / 2, 2);
       }
-
       // add random factor
       b.population = rn(b.population * gauss(2,3,.6,20,3), 3);
-
       // shift burgs on rivers semi-randomly and just a bit
       if (!b.port && cells.r[i]) {
         const shift = Math.min(cells.fl[i]/150, 1);
@@ -187,9 +186,9 @@
       else if (b.port) kinship -= .1;
       if (b.culture !== state.culture) kinship -= .25;
       b.type = getType(i, b.port);
-      const type = b.capital && P(.2) ? "Capital" : b.type === "Generic" ? "City" : b.type;
-      b.coa = COA.generate(stateCOA, kinship, null, type);
-      b.coa.shield = COA.getShield(b.culture, b.state);
+      // const type = b.capital && P(.2) ? "Capital" : b.type === "Generic" ? "City" : b.type;
+      // b.coa = COA.generate(stateCOA, kinship, null, type);
+      // b.coa.shield = COA.getShield(b.culture, b.state);
     }
 
     // de-assign port status if it's the only one on feature

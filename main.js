@@ -592,6 +592,10 @@ function generate() {
     temperaturePoleOutput.value = temperaturePoleInput.value=-30
     heightExponentInput.value = heightExponentOutput.value = 1.89
     precInput.value = precOutput.value = 150
+
+    options.year = 1;
+    options.era = "纪元";
+
     placePoints(); // 生成放置点来计算Voronoi图
     calculateVoronoi(grid, grid.points); // 计算Delaunay之后 再计算Voronoi图
     // drawScaleBar(); // 渲染缩放条(无视)
