@@ -57,10 +57,10 @@ const generate = function(changeHeights = true) {
   function drainWater() {
     const MIN_FLUX_TO_FORM_RIVER = 30;
     const land = cells.i.filter(i => h[i] >= 20).sort((a,b) => h[b] - h[a]);
-
     const lakeOutCells = Lakes.setClimateData(h);
 
     land.forEach(function(i) {
+
       cells.fl[i] += grid.cells.prec[cells.g[i]]; // flux from precipitation
       const x = p[i][0], y = p[i][1];
 
@@ -70,7 +70,6 @@ const generate = function(changeHeights = true) {
         const lakeCell = cells.c[i].find(c => h[c] < 20 && cells.f[c] === lake.i);
 
         cells.fl[lakeCell] += Math.max(lake.flux - lake.evaporation, 0); // not evaporated lake water drains to outlet
-
         // allow chain lakes to retain identity
         if (cells.r[lakeCell] !== lake.river) {
           const sameRiver = cells.c[lakeCell].some(c => cells.r[c] === lake.river);
@@ -105,10 +104,10 @@ const generate = function(changeHeights = true) {
       }
 
       // downhill cell (make sure it's not in the source lake)
-      const min = lakeOutCells[i]
-        ? cells.c[i].filter(c => !lakes.map(lake => lake.i).includes(cells.f[c])).sort((a, b) => h[a] - h[b])[0]
-        : cells.c[i].sort((a, b) => h[a] - h[b])[0];
-
+      const tmp = lakeOutCells[i]
+        ? cells.c[i].filter(c => !lakes.map(lake => lake.i).includes(cells.f[c]))
+        : cells.c[i];
+      const min = tmp.sort((a, b) => h[a] - h[b])[0]
       if (cells.fl[i] < MIN_FLUX_TO_FORM_RIVER) {
         if (h[min] >= 20) cells.fl[min] += cells.fl[i];
         return; // flux is too small to operate as river

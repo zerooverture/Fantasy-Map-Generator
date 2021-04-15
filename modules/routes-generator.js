@@ -17,7 +17,6 @@
       if (!connect.length) continue;
       const farthest = d3.scan(connect, (a, c) => ((c.y - b.y) ** 2 + (c.x - b.x) ** 2) - ((a.y - b.y) ** 2 + (a.x - b.x) ** 2));
       const [from, exit] = findLandPath(b.cell, connect[farthest].cell, null);
-      // console.log(JSON.stringify(from))
       const segments = restorePath(b.cell, exit, "main", from);
       segments.forEach(s => paths.push(s));
       // return paths;
@@ -85,9 +84,7 @@
           const target = ports[t].cell;
           if (connected[target]) continue;
 
-          // console.log(target, source)
           const [from, exit, passable] = findOceanPath(target, source, true);
-          // console.log(from, exit, passable)
           if (!passable) continue;
 
           const path = restorePath(target, exit, "ocean", from);
@@ -165,7 +162,6 @@
     while (queue.length) {
       const next = queue.dequeue(), n = next.e, p = next.p;
       if (toRoad && cells.road[n]) return [from, n];
-      // if(start==267) console.log(n,cells.c[n])
       for (const c of cells.c[n]) {
         if (cells.h[c] < 20) continue; // ignore water cells
         const stateChangeCost = cells.state && cells.state[c] !== cells.state[n] ? 400 : 0; // trails tend to lay within the same state

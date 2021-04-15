@@ -36,7 +36,6 @@
       //const inside = d3.polygonContains(points, grid.points[i]);
       chains.push([t, points]); //chains.push([t, points, inside]);
     }
-    // console.log(chains)
     //const bbox = `M0,0h${graphWidth}v${graphHeight}h${-graphWidth}Z`;
     for (const t of limits) {
       const layer = chains.filter(c => c[0] === t);

@@ -1,7 +1,7 @@
 // module stub to store common functions for ui editors
 "use strict";
 
-// restoreDefaultEvents(); // apply default viewbox events on load
+restoreDefaultEvents(); // apply default viewbox events on load
 
 // 恢复默认的viewbox事件
 // restore default viewbox events

@@ -25,13 +25,11 @@
     collectStatistics();
     assignColors();
 
-    generateCampaigns();
-    // generateDiplomacy();
-    // Routes.draw(capitalRoutes, townRoutes, oceanRoutes);
-    // drawBurgs();
+    // generateCampaigns(); // 战争
+    // generateDiplomacy(); // 外交 这两个去掉
+    Routes.draw(capitalRoutes, townRoutes, oceanRoutes);
+    drawBurgs();
 
-    console.log(JSON.stringify(pack.states))
-    return;
 
     function placeCapitals() {
       TIME && console.time('placeCapitals');
@@ -40,7 +38,6 @@
 
       const score = new Int16Array(cells.s.map(s => s * Math.random())); // cell score for capitals placement
       const sorted = cells.i.filter(i => score[i] > 0 && cells.culture[i]).sort((a, b) => score[b] - score[a]); // filtered and sorted array of indexes
-
       if (sorted.length < count * 10) {
         count = Math.floor(sorted.length / 10);
         if (!count) {WARN && console.warn(`There is no populated cells. Cannot generate states`); return burgs;}

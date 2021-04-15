@@ -43,7 +43,6 @@
     const colors = getColors(count);
     const emblemShape = document.getElementById("emblemShape").value;
 
-    // console.log(cultures)
 
     cultures.forEach(function(c, i) {
       const cell = c.center = placeCenter(c.sort ? c.sort : (i) => cells.s[i]);
@@ -62,8 +61,6 @@
 
     function placeCenter(v) {
       let c, spacing = (graphWidth + graphHeight) / 2 / count;
-      // console.log(spacing)
-      // console.log(populated)
       const sorted = [...populated].sort((a, b) => v(b) - v(a)), max = Math.floor(sorted.length / 2);
       do {c = sorted[biased(0, max, 5)]; spacing *= .9;}
       while (centers.find(cells.p[c][0], cells.p[c][1], spacing) !== undefined);
@@ -371,7 +368,6 @@
     const cost = [];
     while (queue.length) {
       const next = queue.dequeue(), n = next.e, p = next.p, c = next.c;
-      // console.log(next)
       const type = pack.cultures[c].type;
       cells.c[n].forEach(function(e) {
         const biome = cells.biome[e];
@@ -383,7 +379,6 @@
         const totalCost = p + (biomeCost + biomeChangeCost + heightCost + riverCost + typeCost) / pack.cultures[c].expansionism;
         if (totalCost > neutral) return;
         if (!cost[e] || totalCost < cost[e]) {
-          // console.log(e,c)
           if (cells.s[e] > 0) cells.culture[e] = c; // assign culture to populated cell
           cost[e] = totalCost;
           queue.queue({e, p:totalCost, c});

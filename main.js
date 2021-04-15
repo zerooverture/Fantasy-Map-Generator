@@ -617,12 +617,12 @@ function generate() {
     culturesSet.value ="european"
     Cultures.generate(); // 文化生成
     Cultures.expand(); // 文化扩展
+
     BurgsAndStates.generate(); // 城镇和州生成
-    // console.log(JSON.stringify(pack.cells.culture))
-    // Religions.generate();// 宗教生成
-    // BurgsAndStates.defineStateForms(); // 定义州的形式
-    // BurgsAndStates.generateProvinces(); // 生成省份
-    // BurgsAndStates.defineBurgFeatures(); // 定义城镇的特点(港口什么的)
+    Religions.generate();// 宗教生成
+    BurgsAndStates.defineStateForms(); // 定义州的形式
+    BurgsAndStates.generateProvinces(); // 生成省份
+    BurgsAndStates.defineBurgFeatures(); // 定义城镇的特点(港口什么的)
     //
     // drawStates();
     // drawBorders();
@@ -636,7 +636,6 @@ function generate() {
     // addZones();
     // Names.getMapName();
 
-    // console.log(JSON.stringify(grid.cells.prec))
     console.log(grid,pack, graphWidth,graphHeight)
 
     // WARN && console.warn(`TOTAL: ${rn((performance.now()-timeStart)/1000,2)}s`);
@@ -930,7 +929,6 @@ function generatePrecipitation() {
       if (first[0]) {maxPrec = Math.min(maxPrecInit * first[1], 255); first = first[0];}
       let humidity = maxPrec - cells.h[first];// 初始含水量 // initial water amount
       if (humidity <= 0) continue; // 如果第一个单元格过高，则被风吹干 // if first cell in row is too elevated cosdired wind dry
-      // console.log(first,maxPrec, next, steps)
       for (let s = 0, current = first; s < steps; s++, current += next) {
         // 永久冻土上没有通量
         // no flux on permafrost
@@ -941,14 +939,12 @@ function generatePrecipitation() {
             cells.prec[current+next] += Math.max(humidity / rand(10, 20), 1); // 沿海降水 // coastal precipitation
           } else {
             humidity = Math.min(humidity + 5 * modifier, maxPrec);// 风通过电池获得更多的湿度  // wind gets more humidity passing water cell
-            // console.log(humidity)
             cells.prec[current] += 5 * modifier;// 水细胞沉淀(需要正确地通过湖泊倒水) // water cells precipitation (need to correctly pour water through lakes)
           }
           continue;
         }
         // land cell
         const precipitation = getPrecipitation(humidity, current, next);
-        // console.log(precipitation+"")
         cells.prec[current] += precipitation;
         const evaporation = precipitation > 1.5 ? 1 : 0;// 一些湿度蒸发回到大气中 // some humidity evaporates back to the atmosphere
         humidity = Math.min(Math.max(humidity - precipitation + evaporation, 0), maxPrec);
@@ -1260,14 +1256,17 @@ function rankCells() {
 
   const flMean = d3.median(cells.fl.filter(f => f)) || 0, flMax = d3.max(cells.fl) + d3.max(cells.conf); // to normalize flux
   const areaMean = d3.mean(cells.area); // to adjust population by cell area
-  // console.log(JSON.stringify(cells.haven))
 
   for (const i of cells.i) {
     if (cells.h[i] < 20) continue; // no population in water
     let s = +biomesData.habitability[cells.biome[i]]; // base suitability derived from biome habitability
+
     if (!s) continue; // uninhabitable biomes has 0 suitability
+
     if (flMean) s += normalize(cells.fl[i] + cells.conf[i], flMean, flMax) * 250; // big rivers and confluences are valued
+
     s -= (cells.h[i] - 50) / 5; // low elevation is valued, high is not;
+
     if (cells.t[i] === 1) {
       if (cells.r[i]) s += 15; // estuary is valued
       const feature = features[cells.f[cells.haven[i]]];
