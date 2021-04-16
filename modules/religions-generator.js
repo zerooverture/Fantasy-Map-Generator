@@ -137,15 +137,14 @@
       religionsTree.add([x, y]);
       //debug.append("circle").attr("cx", x).attr("cy", y).attr("r", 2).attr("fill", "red");
     }
-
     expandReligions();
 
-    // generate heresies
+// generate heresies
     religions.filter(r => r.type === "Organized").forEach(r => {
       if (r.expansionism < 3) return;
       const count = gauss(0, 1, 0, 3);
       for (let i=0; i < count; i++) {
-        let center = ra(cells.i.filter(i => cells.religion[i] === r.i && cells.c[i].some(c => cells.religion[c] !== r.i)));
+        let center = ra(cells.i.filter(i =>cells.religion[i] === r.i && cells.c[i].some(c => cells.religion[c] !== r.i)));
         if (!center) continue;
         if (!cells.burg[center] && cells.c[center].some(c => cells.burg[c])) center = cells.c[center].find(c => cells.burg[c]);
         const x = cells.p[center][0], y = cells.p[center][1];
@@ -201,6 +200,7 @@
 
     const neutral = cells.i.length / 5000 * 200 * gauss(1, .3, .2, 2, 2) * neutralInput.value; // limit cost for organized religions growth
     const popCost = d3.max(cells.pop) / 3; // enougth population to spered religion without penalty
+
 
     while (queue.length) {
       const next = queue.dequeue(), n = next.e, p = next.p, r = next.r, c = next.c, s = next.s;
@@ -275,7 +275,8 @@
       if (cells.religion[r.center] === r.i) return; // in area
       const religCells = cells.i.filter(i => cells.religion[i] === r.i);
       if (!religCells.length) return; // extinct religion
-      r.center = religCells.sort((a,b) => b.pop - a.pop)[0];
+      var sot = religCells.sort((a,b) => b.pop - a.pop);
+      r.center = sot[0];
     });
   }
 
@@ -292,21 +293,23 @@
 
   // assign a unique two-letters code (abbreviation)
   function getCode(rawName) {
-    const name = rawName.replace("Old ", ""); // remove Old prefix
-    const words = name.split(" "), letters = words.join("");
-    let code = words.length === 2 ? words[0][0]+words[1][0] : letters.slice(0,2);
-    for (let i=1; i < letters.length-1 && pack.religions.some(r => r.code === code); i++) {
-      code = letters[0] + letters[i].toUpperCase();
-    }
-    return code;
+    return "教";
+    // const name = rawName.replace("Old ", ""); // remove Old prefix
+    // const words = name.split(" "), letters = words.join("");
+    // let code = words.length === 2 ? words[0][0]+words[1][0] : letters.slice(0,2);
+    // for (let i=1; i < letters.length-1 && pack.religions.some(r => r.code === code); i++) {
+    //   code = letters[0] + letters[i].toUpperCase();
+    // }
+    // return code;
   }
 
   // get supreme deity name
   const getDeityName = function(culture) {
-    if (culture === undefined) {ERROR && console.error("Please define a culture"); return;}
-    const meaning = generateMeaning();
-    const cultureName = Names.getCulture(culture, null, null, "", .8);
-    return cultureName + ", The " + meaning;
+    return "XX神"; // 起名方面全部改为写死
+    // if (culture === undefined) {ERROR && console.error("Please define a culture"); return;}
+    // const meaning = generateMeaning();
+    // const cultureName = 'Names.getCulture(culture, null, null, "", .8)';
+    // return cultureName + ", The " + meaning;
   }
 
   function generateMeaning() {
@@ -328,37 +331,39 @@
   }
 
   function getReligionName(form, deity, center) {
-    const cells = pack.cells;
-    const random = function() {return Names.getCulture(cells.culture[center], null, null, "", 0);}
-    const type = function() {return rw(types[form]);}
-    const supreme = function() {return deity.split(/[ ,]+/)[0];}
-    const place = function(adj) {
-      const base = cells.burg[center] ? pack.burgs[cells.burg[center]].name : pack.states[cells.state[center]].name;
-      let name = trimVowels(base.split(/[ ,]+/)[0]);
-      return adj ? getAdjective(name) : name;
-    }
-    const culture = function() {return pack.cultures[cells.culture[center]].name;}
-
-    const m = rw(methods);
-    if (m === "Random + type") return [random() + " " + type(), "global"];
-    if (m === "Random + ism") return [trimVowels(random()) + "ism", "global"];
-    if (m === "Supreme + ism" && deity) return [trimVowels(supreme()) + "ism", "global"];
-    if (m === "Faith of + Supreme" && deity) return [ra(['Faith', 'Way', 'Path', 'Word', 'Witnesses']) + " of " + supreme(), "global"];
-    if (m === "Place + ism") return [place() + "ism", "state"];
-    if (m === "Culture + ism") return [trimVowels(culture()) + "ism", "culture"];
-    if (m === "Place + ian + type") return [place("adj") + " " + type(), "state"];
-    if (m === "Culture + type") return [culture() + " " + type(), "culture"];
-    return [trimVowels(random()) + "ism", "global"]; // else
+    return ["XX宗教","global"];
+    // const cells = pack.cells;
+    // const random = function() {return Names.getCulture(cells.culture[center], null, null, "", 0);}
+    // const type = function() {return rw(types[form]);}
+    // const supreme = function() {return deity.split(/[ ,]+/)[0];}
+    // const place = function(adj) {
+    //   const base = cells.burg[center] ? pack.burgs[cells.burg[center]].name : pack.states[cells.state[center]].name;
+    //   let name = trimVowels(base.split(/[ ,]+/)[0]);
+    //   return adj ? getAdjective(name) : name;
+    // }
+    // const culture = function() {return pack.cultures[cells.culture[center]].name;}
+    //
+    // const m = rw(methods);
+    // if (m === "Random + type") return [random() + " " + type(), "global"];
+    // if (m === "Random + ism") return [trimVowels(random()) + "ism", "global"];
+    // if (m === "Supreme + ism" && deity) return [trimVowels(supreme()) + "ism", "global"];
+    // if (m === "Faith of + Supreme" && deity) return [ra(['Faith', 'Way', 'Path', 'Word', 'Witnesses']) + " of " + supreme(), "global"];
+    // if (m === "Place + ism") return [place() + "ism", "state"];
+    // if (m === "Culture + ism") return [trimVowels(culture()) + "ism", "culture"];
+    // if (m === "Place + ian + type") return [place("adj") + " " + type(), "state"];
+    // if (m === "Culture + type") return [culture() + " " + type(), "culture"];
+    // return [trimVowels(random()) + "ism", "global"]; // else
   }
 
   function getCultName(form, center) {
-    const cells = pack.cells;
-    const type = function() {return rw(types[form]);}
-    const random = function() {return trimVowels(Names.getCulture(cells.culture[center], null, null, "", 0).split(/[ ,]+/)[0]);}
-    const burg = function() {return trimVowels(pack.burgs[cells.burg[center]].name.split(/[ ,]+/)[0]);}
-    if (cells.burg[center]) return burg() + "ian " + type();
-    if (Math.random() > .5) return random() + "ian " + type();
-    return type() + " of the " + generateMeaning();
+    return "XX邪教";
+    // const cells = pack.cells;
+    // const type = function() {return rw(types[form]);}
+    // const random = function() {return trimVowels(Names.getCulture(cells.culture[center], null, null, "", 0).split(/[ ,]+/)[0]);}
+    // const burg = function() {return trimVowels(pack.burgs[cells.burg[center]].name.split(/[ ,]+/)[0]);}
+    // if (cells.burg[center]) return burg() + "ian " + type();
+    // if (Math.random() > .5) return random() + "ian " + type();
+    // return type() + " of the " + generateMeaning();
   };
 
   return {generate, add, getDeityName, expandReligions, updateCultures};

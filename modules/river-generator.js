@@ -104,10 +104,9 @@ const generate = function(changeHeights = true) {
       }
 
       // downhill cell (make sure it's not in the source lake)
-      const tmp = lakeOutCells[i]
-        ? cells.c[i].filter(c => !lakes.map(lake => lake.i).includes(cells.f[c]))
-        : cells.c[i];
-      const min = tmp.sort((a, b) => h[a] - h[b])[0]
+      const min = lakeOutCells[i]
+        ? cells.c[i].filter(c => !lakes.map(lake => lake.i).includes(cells.f[c])).sort((a, b) => h[a] - h[b])[0]
+        : cells.c[i].sort((a, b) => h[a] - h[b])[0];
       if (cells.fl[i] < MIN_FLUX_TO_FORM_RIVER) {
         if (h[min] >= 20) cells.fl[min] += cells.fl[i];
         return; // flux is too small to operate as river

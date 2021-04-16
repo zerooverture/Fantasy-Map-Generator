@@ -167,6 +167,23 @@
     const bd = (cell, biomes, fee = 4) => biomes.includes(cells.biome[cell]) ? 1 : fee; // biome difference fee
     const sf = (cell, fee = 4) => cells.haven[cell] && pack.features[cells.f[cells.haven[cell]]].type !== "lake" ? 1 : fee; // not on sea coast fee
 
+    return [
+      {name:"Shwazen", base:0, odd:1, sort: i => n(i) / td(i, 10) / bd(i, [6, 8]), shield:"swiss"},
+      {name:"Angshire", base:1, odd:1, sort: i => n(i) / td(i, 10) / sf(i), shield:"wedged"},
+      {name:"Luari", base:2, odd:1, sort: i => n(i) / td(i, 12) / bd(i, [6, 8]), shield:"french"},
+      {name:"Tallian", base:3, odd:1, sort: i => n(i) / td(i, 15), shield:"horsehead"},
+      {name:"Astellian", base:4, odd:1, sort: i => n(i) / td(i, 16), shield:"spanish"},
+      {name:"Slovan", base:5, odd:1, sort: i => n(i) / td(i, 6) * t[i], shield:"polish"},
+      {name:"Norse", base:6, odd:1, sort: i => n(i) / td(i, 5), shield:"heater"},
+      {name:"Elladan", base:7, odd:1, sort: i => n(i) / td(i, 18) * h[i], shield:"boeotian"},
+      {name:"Romian", base:8, odd:.2, sort: i => n(i) / td(i, 15) / t[i], shield:"roman"},
+      {name:"Soumi", base:9, odd:1, sort: i => n(i) / td(i, 5) / bd(i, [9]) * t[i], shield:"pavise"},
+      {name:"Portuzian", base:13, odd:1, sort: i => n(i) / td(i, 17) / sf(i), shield:"renaissance"},
+      {name:"Vengrian", base: 15, odd:1, sort: i => n(i) / td(i, 11) / bd(i, [4]) * t[i], shield:"horsehead2"},
+      {name:"Turchian", base: 16, odd:.05, sort: i => n(i) / td(i, 14), shield:"round"},
+      {name:"Euskati", base: 20, odd:.05, sort: i => n(i) / td(i, 15) * h[i], shield:"oldFrench"},
+      {name:"Keltan", base: 22, odd:.05, sort: i => n(i) / td(i, 11) / bd(i, [6, 8]) * t[i], shield:"oval"}
+    ];
     if (culturesSet.value === "european") {
       return [
         {name:"Shwazen", base:0, odd:1, sort: i => n(i) / td(i, 10) / bd(i, [6, 8]), shield:"swiss"},
@@ -424,6 +441,7 @@
   }
 
   const getRandomShield = function() {
+    return "GetRandomShield";
     const type = rw(COA.shields.types);
     return rw(COA.shields[type]);
   }

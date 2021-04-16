@@ -210,7 +210,6 @@
         prev = null;
         segment.push(current);
       }
-
       cells.road[current] += score;
       if (current === start) break;
     }

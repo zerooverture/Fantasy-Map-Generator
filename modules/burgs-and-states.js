@@ -13,6 +13,7 @@
 
     const burgs = pack.burgs = placeCapitals();
     pack.states = createStates();
+
     const capitalRoutes = Routes.getRoads();
     placeTowns();
     expandStates();
@@ -127,11 +128,9 @@
         }
         spacing *= .5;
       }
-
       if (manorsInput.value != 1000 && burgsAdded < desiredNumber) {
         ERROR && console.error(`Cannot place all burgs. Requested ${desiredNumber}, placed ${burgsAdded}`);
       }
-
       burgs[0] = {name:undefined}; // do not store burgsTree anymore
       TIME && console.timeEnd('placeTowns');
     }
@@ -810,7 +809,7 @@
     //console.table(states.map(s => s.diplomacy));
   }
 
-  // 为列出的或所有有效状态选择一个表单
+  // 为列出的所有州(states) 选择一个形式(form)
   // select a forms for listed or all valid states
   const defineStateForms = function(list) {
     TIME && console.time("defineStateForms");
@@ -844,8 +843,8 @@
       if (isTheocracy) s.form = "Theocracy";
       else if (isAnarchy) s.form = "Anarchy";
       else s.form = s.type === "Naval" ? rw(naval) : rw(generic);
-      s.formName = selectForm(s);
-      s.fullName = getFullName(s);
+      s.formName = "selectForm(s)";
+      s.fullName = "getFullName(s)";
     }
 
     function selectForm(s) {
@@ -935,6 +934,7 @@
     states.forEach(s => {
       s.provinces = [];
       if (!s.i || s.removed) return;
+
       const stateBurgs = burgs.filter(b => b.state === s.i && !b.removed)
         .sort((a, b) => b.population * gauss(1, .2, .5, 1.5, 3) - a.population)
         .sort((a, b) => b.capital - a.capital);
@@ -949,18 +949,19 @@
         const burg = stateBurgs[i].i;
         const c = stateBurgs[i].culture;
         const nameByBurg = P(.5);
-        const name = nameByBurg ? stateBurgs[i].name : Names.getState(Names.getCultureShort(c), c);
+        const name = nameByBurg ? stateBurgs[i].name : "Names.getState(Names.getCultureShort(c), c)";
         const formName = rw(form);
         form[formName] += 10;
         const fullName = name + " " + formName;
         const color = getMixedColor(s.color);
-        const kinship = nameByBurg ? .8 : .4;
-        const type = getType(center, burg.port);
-        const coa = COA.generate(stateBurgs[i].coa, kinship, null, type);
-        coa.shield = COA.getShield(c, s.i);
-        provinces.push({i:province, state:s.i, center, burg, name, formName, fullName, color, coa});
+        // const kinship = nameByBurg ? .8 : .4;
+        // const type = getType(center, burg.port);
+        // const coa = COA.generate(stateBurgs[i].coa, kinship, null, type);
+        // coa.shield = COA.getShield(c, s.i);
+        provinces.push({i:province, state:s.i, center, burg, name, formName, fullName, color, coa:null});
       }
     });
+    // console.log(JSON.stringify(provinces))
 
     // expand generated provinces
     const queue = new PriorityQueue({comparator: (a, b) => a.p - b.p});
@@ -1042,7 +1043,7 @@
         // generate "wild" province name
         const c = cells.culture[center];
         const nameByBurg = burgCell && P(.5);
-        const name = nameByBurg ? burgs[burg].name : Names.getState(Names.getCultureShort(c), c);
+        const name = nameByBurg ? burgs[burg].name : "Names.getState(Names.getCultureShort(c), c)";
         const f = pack.features[cells.f[center]];
         const provCells = stateNoProvince.filter(i => cells.province[i] === province);
         const singleIsle = provCells.length === f.cells && !provCells.find(i => cells.f[i] !== f.i);
@@ -1052,11 +1053,11 @@
         const fullName = name + " " + formName;
         const color = getMixedColor(s.color);
         const dominion = colony ? P(.95) : singleIsle || isleGroup ? P(.7) : P(.3);
-        const kinship = dominion ? 0 : .4;
-        const type = getType(center, burgs[burg]?.port);
-        const coa = COA.generate(s.coa, kinship, dominion, type);
-        coa.shield = COA.getShield(c, s.i);
-        provinces.push({i:province, state:s.i, center, burg, name, formName, fullName, color, coa});
+        // const kinship = dominion ? 0 : .4;
+        // const type = getType(center, burgs[burg]?.port);
+        // const coa = COA.generate(s.coa, kinship, dominion, type);
+        // coa.shield = COA.getShield(c, s.i);
+        provinces.push({i:province, state:s.i, center, burg, name, formName, fullName, color, coa:null});
         s.provinces.push(province);
 
         // check if there is a land way within the same state between two cells

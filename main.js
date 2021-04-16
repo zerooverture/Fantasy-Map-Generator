@@ -622,7 +622,7 @@ function generate() {
     Religions.generate();// 宗教生成
     BurgsAndStates.defineStateForms(); // 定义州的形式
     BurgsAndStates.generateProvinces(); // 生成省份
-    BurgsAndStates.defineBurgFeatures(); // 定义城镇的特点(港口什么的)
+    // BurgsAndStates.defineBurgFeatures(); // 定义城镇的特点(港口什么的)
     //
     // drawStates();
     // drawBorders();
@@ -635,6 +635,8 @@ function generate() {
     // addMarkers();
     // addZones();
     // Names.getMapName();
+
+    console.log(JSON.stringify(pack.provinces))
 
     console.log(grid,pack, graphWidth,graphHeight)
 
@@ -1036,7 +1038,6 @@ function reGraph() {
   cells.h = new Uint8Array(newCells.h); // heights
   cells.area = new Uint16Array(cells.i.length); // cell area
   cells.i.forEach(i => {
-    // console.log(i)
     cells.area[i] = Math.abs(d3.polygonArea(getPackPolygon(i)))
   });
 
