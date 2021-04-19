@@ -622,9 +622,9 @@ function generate() {
     Religions.generate();// 宗教生成
     BurgsAndStates.defineStateForms(); // 定义州的形式
     BurgsAndStates.generateProvinces(); // 生成省份
-    // BurgsAndStates.defineBurgFeatures(); // 定义城镇的特点(港口什么的)
-    //
-    // drawStates();
+    BurgsAndStates.defineBurgFeatures(); // 定义城镇的特点(港口什么的)
+
+    drawStates();
     // drawBorders();
     // BurgsAndStates.drawStateLabels();
     //
@@ -633,10 +633,11 @@ function generate() {
     //
     // Military.generate();
     // addMarkers();
-    // addZones();
+    // addZones(); // 重新生成一些区域,但是似乎是事件生成 忽略
     // Names.getMapName();
 
-    console.log(JSON.stringify(pack.provinces))
+    // console.log(JSON.stringify(pack.burgs))
+    // console.log(pack.burgs)
 
     console.log(grid,pack, graphWidth,graphHeight)
 
@@ -1420,22 +1421,23 @@ function addMarkers(number = 1) {
     }
   }()
 
-  void function addBattlefields() {
-    let battlefields = Array.from(cells.i).filter(i => cells.state[i] && cells.pop[i] > 2 && cells.h[i] < 50 && cells.h[i] > 25);
-    let count = battlefields.length < 100 ? 0 : Math.ceil(battlefields.length / 500 * number);
-    if (count) addMarker("battlefield", "⚔️", 50, 52, 12);
-
-    while (count && battlefields.length) {
-      const cell = battlefields.splice(Math.floor(Math.random() * battlefields.length), 1);
-      const id = appendMarker(cell, "battlefield");
-      const campaign = ra(states[cells.state[cell]].campaigns);
-      const date = generateDate(campaign.start, campaign.end);
-      const name = Names.getCulture(cells.culture[cell]) + " Battlefield";
-      const legend = `A historical battle of the ${campaign.name}. \r\nDate: ${date} ${options.era}`;
-      notes.push({id, name, legend});
-      count--;
-    }
-  }()
+  // 战争标记,因为不生成军队所以去掉
+  // void function addBattlefields() {
+  //   let battlefields = Array.from(cells.i).filter(i => cells.state[i] && cells.pop[i] > 2 && cells.h[i] < 50 && cells.h[i] > 25);
+  //   let count = battlefields.length < 100 ? 0 : Math.ceil(battlefields.length / 500 * number);
+  //   if (count) addMarker("battlefield", "⚔️", 50, 52, 12);
+  //
+  //   while (count && battlefields.length) {
+  //     const cell = battlefields.splice(Math.floor(Math.random() * battlefields.length), 1);
+  //     const id = appendMarker(cell, "battlefield");
+  //     const campaign = ra(states[cells.state[cell]].campaigns);
+  //     const date = generateDate(campaign.start, campaign.end);
+  //     const name = Names.getCulture(cells.culture[cell]) + " Battlefield";
+  //     const legend = `A historical battle of the ${campaign.name}. \r\nDate: ${date} ${options.era}`;
+  //     notes.push({id, name, legend});
+  //     count--;
+  //   }
+  // }()
 
   function addMarker(id, icon, x, y, size) {
     const markers = svg.select("#defs-markers");
