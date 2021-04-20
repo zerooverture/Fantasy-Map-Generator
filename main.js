@@ -625,18 +625,18 @@ function generate() {
     BurgsAndStates.defineBurgFeatures(); // 定义城镇的特点(港口什么的)
 
     drawStates();
-    // drawBorders();
-    // BurgsAndStates.drawStateLabels();
+    drawBorders();
+    BurgsAndStates.drawStateLabels();
     //
-    // Rivers.specify();
-    // Lakes.generateName();
+    Rivers.specify();
+    Lakes.generateName();
     //
     // Military.generate();
     // addMarkers();
     // addZones(); // 重新生成一些区域,但是似乎是事件生成 忽略
     // Names.getMapName();
 
-    // console.log(JSON.stringify(pack.burgs))
+    console.log(JSON.stringify(pack.rivers))
     // console.log(pack.burgs)
 
     console.log(grid,pack, graphWidth,graphHeight)

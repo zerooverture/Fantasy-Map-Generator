@@ -329,7 +329,7 @@ const specify = function() {
 
   for (const r of rivers) {
     r.basin = getBasin(r.i);
-    r.name = getName(r.mouth);
+    r.name = "getName(r.mouth)";
     const small = r.length < smallLength;
     r.type = r.parent && !(r.i%6) ? small ? "Branch" : "Fork" : small ? rw(smallType) : "River";
   }
